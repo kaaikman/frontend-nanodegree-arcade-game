@@ -1,5 +1,6 @@
 //test
 var winState = 0;
+var winCount = 0;
 var lifeSlot = 0;
 var deathCount = -1;
 var deathArray = [];
@@ -85,6 +86,7 @@ Enemy.prototype.update = function(dt) {
           deathCount = -1;
           deathArray = [];
           lifeStateArray = [];
+          winState = 1;
           player = new Player();
         }
       }
@@ -116,6 +118,7 @@ Player.prototype.update = function() {
     if(charSlot < 4) {
       charSlot++;
       deathCount++;
+      winCount++;
       deathArray.push('images/Heart.png');
       lifeStateArray.push(new lifeState);
       player = new Player();
@@ -125,6 +128,7 @@ Player.prototype.update = function() {
       deathCount = -1;
       deathArray = [];
       lifeStateArray = [];
+      winCount++;
       winState = 1;
       player = new Player();
     }
@@ -136,9 +140,13 @@ Player.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   if(winState === 1) {
     ctx.drawImage(Resources.get(this.winSprite), this.x, this.y);
+    ctx.font = '72px serif';
+    ctx.fillStyle = 'yellow';
+    ctx.fillText(winCount + '/5', this.x, this.y + 50);
     setTimeout(function() {
       winState = 0;
-    }, 500);
+      winCount = 0;
+    }, 1000);
   }
 };
 
