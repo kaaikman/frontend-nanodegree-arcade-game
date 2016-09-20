@@ -1,4 +1,5 @@
 //test
+var winState = 0;
 var lifeSlot = 0;
 var deathCount = -1;
 var deathArray = [];
@@ -101,6 +102,7 @@ Enemy.prototype.render = function() {
 var Player = function() {
   //this.sprite = 'images/char-boy.png';
   this.sprite = charArray[charSlot];
+  this.winSprite = 'images/Star.png'
   //starting position bottom center
   this.x = 2 * 101;
   this.y = 5 * 75 /*83*/;
@@ -123,6 +125,7 @@ Player.prototype.update = function() {
       deathCount = -1;
       deathArray = [];
       lifeStateArray = [];
+      winState = 1;
       player = new Player();
     }
   }
@@ -130,7 +133,13 @@ Player.prototype.update = function() {
 };
 
 Player.prototype.render = function() {
-  ctx.drawImage(Resources.get(this.sprite), this.x, this.y)
+  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  if(winState === 1) {
+    ctx.drawImage(Resources.get(this.winSprite), this.x, this.y);
+    setTimeout(function() {
+      winState = 0;
+    }, 500);
+  }
 };
 
 Player.prototype.handleInput = function(keyPress) {
