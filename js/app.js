@@ -1,3 +1,34 @@
+//test
+var lifeSlot = 0;
+var deathCount = -1;
+var deathArray = [];
+var charSlot = 0;
+var charArray = [];
+charArray.push('images/char-boy.png', 'images/char-cat-girl.png', 'images/char-horn-girl.png', 'images/char-pink-girl.png', 'images/char-princess-girl.png');
+var Life = function() {
+    this.sprite = charArray[lifeSlot];
+    this.x = (lifeSlot * (101/2));
+    this.y = 606 - (171/2) - 11;
+};
+
+Life.prototype.update = function() {
+
+};
+
+Life.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 101/2, 171/2);
+};
+
+var lifeState = function() {
+  this.sprite = deathArray[deathCount];
+  this.x = (deathCount * (101/2) + 10);
+  this.y = 606 - (171/2);
+}
+
+lifeState.prototype.render = function() {
+  ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 101/3, 171/3);
+}
+lifeStateArray = [];
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -14,7 +45,7 @@ var Enemy = function() {
 //Set enemy start position and speed randomly
 Enemy.prototype.startPosition = function() {
   //start off screen
-  this.x = Math.random() * ((-175) - (-25)) + (-25);
+  this.x = Math.random() * ((-25) - (-175)) + (-175);
   //start at random stone-block row
   this.y = 60 + (Math.round(Math.random() * (2.49 - (-0.5)) + (-0.5)))*83;
   //random speed
@@ -38,9 +69,23 @@ Enemy.prototype.update = function(dt) {
 
     //collision detection
     if(this.y === 60 && player.y === 43 || this.y === 143 && player.y === 126 || this.y === 226 && player.y === 209) {
-      if(this.x + 101 >= player.x + 20 && this.x <= player.x + 81) {
-        player.x = 2 * 101;
-        player.y = 5 * 75;
+      if(this.x + 101 >= player.x + 35 && this.x <= player.x + 66) {
+        // player.x = 2 * 101;
+        // player.y = 5 * 75;
+        if(charSlot < 4) {
+          charSlot++;
+          deathCount++;
+          deathArray.push('images/Rock.png');
+          lifeStateArray.push(new lifeState);
+          player = new Player();
+        }
+        else {
+          charSlot = 0;
+          deathCount = -1;
+          deathArray = [];
+          lifeStateArray = [];
+          player = new Player();
+        }
       }
     }
 };
@@ -54,7 +99,8 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-  this.sprite = 'images/char-boy.png';
+  //this.sprite = 'images/char-boy.png';
+  this.sprite = charArray[charSlot];
   //starting position bottom center
   this.x = 2 * 101;
   this.y = 5 * 75 /*83*/;
@@ -65,7 +111,22 @@ Player.prototype.update = function() {
     //reset position to start
     this.x = 2* 101;
     this.y = 5 *75;
+    if(charSlot < 4) {
+      charSlot++;
+      deathCount++;
+      deathArray.push('images/Heart.png');
+      lifeStateArray.push(new lifeState);
+      player = new Player();
+    }
+    else {
+      charSlot = 0;
+      deathCount = -1;
+      deathArray = [];
+      lifeStateArray = [];
+      player = new Player();
+    }
   }
+
 };
 
 Player.prototype.render = function() {
@@ -103,8 +164,13 @@ Player.prototype.handleInput = function(keyPress) {
 var player = new Player();
 
 var allEnemies = [];
-for (i = 0; i < 4; i++) {
+for(i = 0; i < 4; i++) {
   allEnemies.push(new Enemy);
+}
+
+var lives = [];
+for(lifeSlot; lifeSlot < 5; lifeSlot++) {
+  lives.push(new Life);
 }
 
 // This listens for key presses and sends the keys to your
