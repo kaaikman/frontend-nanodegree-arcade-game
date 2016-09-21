@@ -90,8 +90,7 @@ Enemy.prototype.update = function(dt) {
         statusCount++;
         statusArray.push('images/Rock.png');
         lifeStateArray.push(new lifeState());
-        //player = new Player();
-        resetPlayer();
+        player.reset();
       }
 			//reset if went through all characters
       else {
@@ -100,8 +99,7 @@ Enemy.prototype.update = function(dt) {
         statusArray = [];
         lifeStateArray = [];
         winState = 1;
-        //player = new Player();
-        resetPlayer();
+        player.reset();
       }
     }
   }
@@ -134,8 +132,8 @@ Player.prototype.update = function() {
       winCount++;
       statusArray.push('images/Heart.png');
       lifeStateArray.push(new lifeState());
-      //this will reset the position AND allow the image to update through the render method
-      resetPlayer();
+      //this will reset the position and update character
+      this.reset();
     }
 		//reset if went through all characters
     else {
@@ -145,9 +143,16 @@ Player.prototype.update = function() {
       lifeStateArray = [];
       winCount++;
       winState = 1;
-      resetPlayer();
+      this.reset();
     }
   }
+};
+
+//reset position and update sprite
+Player.prototype.reset = function() {
+  this.sprite = CHAR_ARRAY[charSlot];
+  this.x = 2 * 101;
+  this.y = 5 * 75;
 };
 
 Player.prototype.render = function() {
@@ -192,11 +197,6 @@ Player.prototype.handleInput = function(keyPress) {
 
 //instantiate all objects (player, enemies(array), lives(array))
 var player = new Player();
-
-//use to reset player so character graphic updates
-var resetPlayer = function() {
-  player = new Player();
-}
 
 var allEnemies = [];
 for(i = 0; i < 4; i++) {
