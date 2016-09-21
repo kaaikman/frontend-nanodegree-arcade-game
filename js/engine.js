@@ -159,8 +159,8 @@ var Engine = (function(global) {
         lives.forEach(function(life) {
           life.render();
         });
-        lifeStateArray.forEach(function(death) {
-          death.render();
+        lifeStateArray.forEach(function(winOrLoss) {
+          winOrLoss.render();
         })
     }
 

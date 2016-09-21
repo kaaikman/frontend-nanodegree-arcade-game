@@ -1,50 +1,63 @@
-//test
+//GLOBAL VARIABLES
+//for when conditions are met to finish a round
 var winState = 0;
+//count # of characters that make it across
 var winCount = 0;
-var lifeSlot = 0;
-var deathCount = -1;
-var deathArray = [];
+//hold imgs for the 5 playable characters
+var charArray = ['images/char-boy.png', 'images/char-cat-girl.png', 'images/char-horn-girl.png', 'images/char-pink-girl.png', 'images/char-princess-girl.png'];
+//index for which character is currently being played
 var charSlot = 0;
-var charArray = [];
-charArray.push('images/char-boy.png', 'images/char-cat-girl.png', 'images/char-horn-girl.png', 'images/char-pink-girl.png', 'images/char-princess-girl.png');
+//index for displaying character portraits at bottom of screen
+var lifeSlot = 0;
+//index for displaying character life status over character portraits
+//start at -1 for ease of using only ++ on win/loss event
+var statusCount = -1;
+//empty array to fill with success/fail imgs as needed to show character status
+var statusArray = [];
+//empty array for storing lifeState objects
+var lifeStateArray = [];
+
+//OBJECTS
+//handle each character (or life) displayed at bottom of screen
 var Life = function() {
-    this.sprite = charArray[lifeSlot];
-    this.x = (lifeSlot * (101/2));
-    this.y = 606 - (171/2) - 11;
+  this.sprite = charArray[lifeSlot];
+  this.x = (lifeSlot * (101/2));
+  this.y = 606 - (171/2) - 11;
 };
 
-Life.prototype.update = function() {
-
-};
+// Life.prototype.update = function() {
+// };
 
 Life.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 101/2, 171/2);
+  ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 101/2, 171/2);
 };
 
+//handle indicator for showing success or failure of each character
 var lifeState = function() {
-  this.sprite = deathArray[deathCount];
-  this.x = (deathCount * (101/2) + 10);
+  this.sprite = statusArray[statusCount];
+  this.x = (statusCount * (101/2) + 10);
   this.y = 606 - (171/2);
-}
+};
 
 lifeState.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 101/3, 171/3);
-}
-lifeStateArray = [];
+};
+//lifeStateArray = [];
+
 // Enemies our player must avoid
 var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+  // Variables applied to each of our instances go here,
+  // we've provided one for you to get started
 
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
+  // The image/sprite for our enemies, this uses
+  // a helper we've provided to easily load images
+  this.sprite = 'images/enemy-bug.png';
 
-    //call initial positioning
-    this.startPosition();
+  //call initial positioning
+  this.startPosition();
 };
 
-//Set enemy start position and speed randomly
+//set enemy start position and speed randomly
 Enemy.prototype.startPosition = function() {
   //start off screen
   this.x = Math.random() * ((-25) - (-175)) + (-175);
@@ -52,50 +65,51 @@ Enemy.prototype.startPosition = function() {
   this.y = 60 + (Math.round(Math.random() * (2.49 - (-0.5)) + (-0.5)))*83;
   //random speed
   this.enemySpeed = Math.random() * (235 - 35) + 35;
-}
+};
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+  // You should multiply any movement by the dt parameter
+  // which will ensure the game runs at the same speed for
+  // all computers.
 
-    //movement
-    this.x += this.enemySpeed * dt;
+  //movement
+  this.x += this.enemySpeed * dt;
 
-    //reuse enemy by moving it back to a new starting position once off screen
-    if(this.x > 7 * 101) {
-      this.startPosition();
-    }
+  //reuse enemy by moving it back to a new starting position once off screen
+  if(this.x > 7 * 101) {
+    this.startPosition();
+  }
 
-    //collision detection
-    if(this.y === 60 && player.y === 43 || this.y === 143 && player.y === 126 || this.y === 226 && player.y === 209) {
-      if(this.x + 101 >= player.x + 35 && this.x <= player.x + 66) {
-        // player.x = 2 * 101;
-        // player.y = 5 * 75;
-        if(charSlot < 4) {
-          charSlot++;
-          deathCount++;
-          deathArray.push('images/Rock.png');
-          lifeStateArray.push(new lifeState);
-          player = new Player();
-        }
-        else {
-          charSlot = 0;
-          deathCount = -1;
-          deathArray = [];
-          lifeStateArray = [];
-          winState = 1;
-          player = new Player();
-        }
+  //collision detection
+  if(this.y === 60 && player.y === 43 || this.y === 143 && player.y === 126 || this.y === 226 && player.y === 209) {
+    if(this.x + 101 >= player.x + 35 && this.x <= player.x + 66) {
+      // player.x = 2 * 101;
+      // player.y = 5 * 75;
+      if(charSlot < 4) {
+        charSlot++;
+        statusCount++;
+        statusArray.push('images/Rock.png');
+        lifeStateArray.push(new lifeState());
+        player = new Player();
+      }
+			//reset if went through all characters
+      else {
+        charSlot = 0;
+        statusCount = -1;
+        statusArray = [];
+        lifeStateArray = [];
+        winState = 1;
+        player = new Player();
       }
     }
+  }
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 // Now write your own player class
@@ -104,7 +118,7 @@ Enemy.prototype.render = function() {
 var Player = function() {
   //this.sprite = 'images/char-boy.png';
   this.sprite = charArray[charSlot];
-  this.winSprite = 'images/Star.png'
+  this.winSprite = 'images/Star.png';
   //starting position bottom center
   this.x = 2 * 101;
   this.y = 5 * 75 /*83*/;
@@ -117,27 +131,28 @@ Player.prototype.update = function() {
     this.y = 5 *75;
     if(charSlot < 4) {
       charSlot++;
-      deathCount++;
+      statusCount++;
       winCount++;
-      deathArray.push('images/Heart.png');
-      lifeStateArray.push(new lifeState);
+      statusArray.push('images/Heart.png');
+      lifeStateArray.push(new lifeState());
       player = new Player();
     }
+		//reset if went through all characters
     else {
       charSlot = 0;
-      deathCount = -1;
-      deathArray = [];
+      statusCount = -1;
+      statusArray = [];
       lifeStateArray = [];
       winCount++;
       winState = 1;
       player = new Player();
     }
   }
-
 };
 
 Player.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+	//if finish round show score
   if(winState === 1) {
     ctx.drawImage(Resources.get(this.winSprite), this.x, this.y);
     ctx.font = '72px serif';
@@ -172,7 +187,7 @@ Player.prototype.handleInput = function(keyPress) {
         this.x -= 101;
       }
       break;
-  }
+  };
 };
 
 // Now instantiate your objects.
@@ -182,23 +197,23 @@ var player = new Player();
 
 var allEnemies = [];
 for(i = 0; i < 4; i++) {
-  allEnemies.push(new Enemy);
+  allEnemies.push(new Enemy());
 }
 
 var lives = [];
 for(lifeSlot; lifeSlot < 5; lifeSlot++) {
-  lives.push(new Life);
+  lives.push(new Life());
 }
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
+  var allowedKeys = {
+      37: 'left',
+      38: 'up',
+      39: 'right',
+      40: 'down'
+  };
 
-    player.handleInput(allowedKeys[e.keyCode]);
+  player.handleInput(allowedKeys[e.keyCode]);
 });

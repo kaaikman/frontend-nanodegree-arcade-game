@@ -1,6 +1,19 @@
 frontend-nanodegree-arcade-game
 ===============================
+Frogger-like game. 
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+## How to start:
+* The game automatically runs from the [index.html](https://kaaikman.github.io/frontend-nanodegree-arcade-game/) page
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+## How to play:
+1. Movement:
+  * Arrow keys move the character (up, right, left, down)
+2. Goal:
+  * Get your character across the road to the water without being hit by a bug
+3. Scoring:
+  * #/5
+  * You will get 1 point for each character you successfully get across
+  * There are 5 characters and you have only 1 chance per round to get each one across
+  * The game will automatically restart once you go through all 5 characters
+
+_Source for art/engine: [Udacity](https://github.com/udacity/frontend-nanodegree-arcade-game)_
