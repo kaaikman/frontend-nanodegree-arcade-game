@@ -1,10 +1,12 @@
+//file handles all objects, interactions and input
+
 //GLOBAL VARIABLES
 //for when conditions are met to finish a round
 var winState = 0;
 //count # of characters that make it across
 var winCount = 0;
 //hold imgs for the 5 playable characters
-var charArray = ['images/char-boy.png', 'images/char-cat-girl.png', 'images/char-horn-girl.png', 'images/char-pink-girl.png', 'images/char-princess-girl.png'];
+var CHAR_ARRAY = ['images/char-boy.png', 'images/char-cat-girl.png', 'images/char-horn-girl.png', 'images/char-pink-girl.png', 'images/char-princess-girl.png'];
 //index for which character is currently being played
 var charSlot = 0;
 //index for displaying character portraits at bottom of screen
@@ -20,7 +22,7 @@ var lifeStateArray = [];
 //OBJECTS
 //handle each character (or life) displayed at bottom of screen
 var Life = function() {
-  this.sprite = charArray[lifeSlot];
+  this.sprite = CHAR_ARRAY[lifeSlot];
   this.x = (lifeSlot * (101/2));
   this.y = 606 - (171/2) - 11;
 };
@@ -42,13 +44,9 @@ var lifeState = function() {
 lifeState.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 101/3, 171/3);
 };
-//lifeStateArray = [];
 
 // Enemies our player must avoid
 var Enemy = function() {
-  // Variables applied to each of our instances go here,
-  // we've provided one for you to get started
-
   // The image/sprite for our enemies, this uses
   // a helper we've provided to easily load images
   this.sprite = 'images/enemy-bug.png';
@@ -92,7 +90,8 @@ Enemy.prototype.update = function(dt) {
         statusCount++;
         statusArray.push('images/Rock.png');
         lifeStateArray.push(new lifeState());
-        player = new Player();
+        //player = new Player();
+        resetPlayer();
       }
 			//reset if went through all characters
       else {
@@ -101,7 +100,8 @@ Enemy.prototype.update = function(dt) {
         statusArray = [];
         lifeStateArray = [];
         winState = 1;
-        player = new Player();
+        //player = new Player();
+        resetPlayer();
       }
     }
   }
@@ -116,8 +116,7 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-  //this.sprite = 'images/char-boy.png';
-  this.sprite = charArray[charSlot];
+  this.sprite = CHAR_ARRAY[charSlot];
   this.winSprite = 'images/Star.png';
   //starting position bottom center
   this.x = 2 * 101;
@@ -126,16 +125,17 @@ var Player = function() {
 
 Player.prototype.update = function() {
   if(this.y < 0) {
-    //reset position to start
-    this.x = 2* 101;
-    this.y = 5 *75;
+    //reset position to start -- don't need with resetPlayer
+    // this.x = 2* 101;
+    // this.y = 5 *75;
     if(charSlot < 4) {
       charSlot++;
       statusCount++;
       winCount++;
       statusArray.push('images/Heart.png');
       lifeStateArray.push(new lifeState());
-      player = new Player();
+      //this will reset the position AND allow the image to update through the render method
+      resetPlayer();
     }
 		//reset if went through all characters
     else {
@@ -145,14 +145,14 @@ Player.prototype.update = function() {
       lifeStateArray = [];
       winCount++;
       winState = 1;
-      player = new Player();
+      resetPlayer();
     }
   }
 };
 
 Player.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-	//if finish round show score
+	//if finish round: show score
   if(winState === 1) {
     ctx.drawImage(Resources.get(this.winSprite), this.x, this.y);
     ctx.font = '72px serif';
@@ -190,10 +190,13 @@ Player.prototype.handleInput = function(keyPress) {
   };
 };
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
+//instantiate all objects (player, enemies(array), lives(array))
 var player = new Player();
+
+//use to reset player so character graphic updates
+var resetPlayer = function() {
+  player = new Player();
+}
 
 var allEnemies = [];
 for(i = 0; i < 4; i++) {
